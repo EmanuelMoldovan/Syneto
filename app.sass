@@ -1,0 +1,52 @@
+//VARIABLES
+
+$blue: #005ce6
+$light-blue: #009999
+$grey: #c2c2d6
+$cherry: #990033
+
+$font-size: 20px
+
+//MIXINS
+
+//STYLES
+
+button
+    border: none
+    background-color: $grey
+    color: $light-blue
+    height: 70px
+    width: 70px
+    font-size: $font-size
+    cursor: pointer
+
+button:hover
+    background-color: $grey - 20
+    
+button:active
+    background-color: $grey - 30
+    font-size: $font-size + 20
+
+.container
+    border: 2px solid
+    border-color: $blue  
+    width: 400px
+    height: 500px
+    position: relative
+    margin: 100px auto 
+
+table
+    width: 100% 
+    height: 100%
+    padding: 20px
+    padding-right: 0px
+    box-sizing: border-box
+
+#calculator-input
+    color: $cherry
+    font-size: $font-size +10
+    text-align: right
+    padding-right: 20px 
+    box-sizing: border-box  
+    max-width: 100px 
+    word-wrap: break-word
