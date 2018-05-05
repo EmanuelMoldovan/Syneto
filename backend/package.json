@@ -17,7 +17,12 @@
   },
   "homepage": "https://github.com/EmanuelMoldovan/Syneto#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
     "express": "^4.16.3",
-    "jsonwebtoken": "^8.2.1"
+    "jsonwebtoken": "^8.2.1",
+    "mongoose": "^5.0.17",
+    "path": "^0.12.7"
   }
 }
