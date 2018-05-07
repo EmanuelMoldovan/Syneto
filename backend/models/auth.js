@@ -63,19 +63,7 @@ module.exports.comparePassword = function(candidatePassword, hash, callback) {
 };
 
 module.exports.updateUser = function(user, callback) {
-    if (user.body.password) {
-        bcrypt.genSalt(10, (err, salt) => {
-            bcrypt.hash(user.body.password, salt, (err, hash) => {
-                if (err) {
-                    throw err;
-                }
-                user.body.password = hash;
-                User.update({ _id: user.params.user_id }, user.body, callback);
-            })
-        })
-    } else {
-        User.update({ _id: user.params.user_id }, user.body, callback);
-    }
+     User.update({ _id: user._id }, user, callback);
 };
 
 module.exports.getAllUsers = function(userId, callback) {

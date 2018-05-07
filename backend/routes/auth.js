@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 
 const User = require('../models/auth');
 const config = require('../config/database')
@@ -20,6 +21,28 @@ router.get('/try', passport, (req, res) => {
     })  
 })
 
+// Email confirmation API
+router.get('/confirm/:token', (req, res) => {
+    jwt.verify(req.params.token, config.secret, (err, authData) => {
+        if(err) {
+            res.sendStatus(403);
+        } else {
+            if(authData.user.confirmed === false){
+                authData.user.confirmed = true;
+                User.updateUser(authData.user, (err, user) => {
+                    if (err) {
+                        res.json({ success: false, msg: 'Email confirmation failed' });
+                    } else {
+                        res.json({ success: true, msg: 'Email confirmed', id: user._id });
+                    }
+                });
+            } else{
+                res.json({ success: false, msg: 'Email allready confirmed', id: user._id });
+            }          
+        }
+    })  
+})
+
 // Register
 router.post('/register', (req, res) => {
     const newUser = new User({
@@ -29,13 +52,60 @@ router.post('/register', (req, res) => {
         confirmed: false
     });
 
-    User.addUser(newUser, (err, user) => {
+    User.getUserByUsername(newUser.username, (err, user) => {
         if (err) {
-            res.json({ success: false, msg: 'Failed to register user' });
-        } else {
-            res.json({ success: true, msg: 'User registered', id: user._id });
+            throw err;
         }
-    });
+
+        // Verify if username exist
+        if (user) {
+            return res.json({ success: false, msg: 'Username allready exist in our system' });
+        } else{
+            jwt.sign({user: newUser}, config.secret, {  expiresIn: '10h' }, (err, token) => {
+                let resultToken = token;
+                User.addUser(newUser, (err, user) => {
+                    if (err) {
+                        res.json({ success: false, msg: 'Failed to register user' });
+                    } else {
+                        const output = `
+                            <h1>Syneto CALCULATOR</h1>
+                            </br>
+                            <p>Please confirm your email by clicking the link bellow</p>
+                            </br>
+                            <p>http://localhost:5000/api/confirm/${resultToken}</p>
+                        `;
+        
+                        let transporter = nodemailer.createTransport({
+                            host: 'smtp.mail.yahoo.com',
+                            port: 465,
+                            secure: true, // use SSL
+                            auth: {
+                                user: 'synetocalculator@yahoo.com',
+                                pass: 'zxcasdqwe123!@#'
+                            }
+                        });
+        
+                        // setup email data with unicode symbols
+                        let mailOptions = {
+                            from: '"SYNETO Calculator" <synetocalculator@yahoo.com>', // sender address
+                            to: req.body.email, // list of receivers
+                            subject: 'Confirmation email', // Subject line
+                            text: 'Hello world?', // plain text body
+                            html: output // html body
+                        };
+        
+                        // send mail with defined transport object
+                        transporter.sendMail(mailOptions, (error, info) => {
+                            if (error) {
+                                return console.log(error);
+                            }
+                            res.json({ success: true, msg: 'E-mail sent'});
+                        });                
+                    }
+                });        
+            }) 
+        }
+    })      
 });
 
 router.post('/login', (req, res) => {
@@ -51,6 +121,7 @@ router.post('/login', (req, res) => {
             return res.json({ success: false, msg: 'User not found' });
         }
 
+        // Verify if password match
         User.comparePassword(password, user.password, (err, isMatch) => {
             if (err) {
                 throw err;
