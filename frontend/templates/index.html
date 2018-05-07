@@ -9,10 +9,14 @@
 
     <body>
         <header>
-
+            <nav>
+                <a href="#login" onclick="goTo(this)">Login</a> |
+                <a href="#calculator" onclick="goTo(this)">Calculator</a> |
+                <a href="#users" onclick="goTo(this)">Users</a>
+            </nav>
         </header>
 
-        <section class="container">
+        <section class="container" id="calculator" style="display: none;">
             <table>
                 <tr>
                     <td><button onclick="buttonPush(this)">C</button></td>
@@ -44,6 +48,39 @@
                 </tr>
             </table>
         </section>
+
+        <div id="login">
+            <div class="login-box">
+                <img src="../styles/images/avatar.jpg" class="avatar">
+                <h1>Login Here</h1>
+                <form>
+                    <p>Username</p>
+                    <input type="text" name="username" placeholder="Enter Username">
+                    <p>Password</p>
+                    <input type="password" name="password" placeholder="Enter Password">
+                    <input type="submit" name="submit" value="Login">
+                    <a href="#register" onclick="goTo(this)">Create an account</a>  
+                </form>                
+            </div>        
+        </div>
+
+        <div id="register" style="display: none;">
+            <div class="login-box">
+                <img src="../styles/images/avatar.jpg" class="avatar">
+                <h1>Register</h1>
+                <form>
+                    <p>Username</p>
+                    <input type="text" name="username" placeholder="Enter Username">
+                    <p>Email</p>
+                    <input type="email" name="email" placeholder="Enter Email">
+                    <p>Password</p>
+                    <input type="password" name="password" placeholder="Enter Password">
+                    <p>Confirm password</p>
+                    <input type="password" name="confirmPassword" placeholder="Enter Password">
+                    <input type="submit" name="submit" value="Register">
+                </form>                
+            </div> 
+        </div>
 
         <footer>
 

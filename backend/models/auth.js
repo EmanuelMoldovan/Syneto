@@ -24,6 +24,10 @@ const UserSchema = mongoose.Schema({
     confirmed: {
         type: Boolean,
         require: false
+    },
+    banned:{
+        type: Boolean,
+        require: false
     }
 });
 
@@ -74,10 +78,10 @@ module.exports.getAllUsers = function(userId, callback) {
 
         if (!user) {
             return false;
-        } else if (user._doc.rol == 0) {
+        } else if (user._doc.role == 0) {
             User.find({})
                 .exec(callback);        
-        } else if (user._doc.rol == 1) {
+        } else {
             User.find({ _id: user._doc._id }, callback)
         }
 

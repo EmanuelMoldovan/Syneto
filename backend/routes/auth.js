@@ -61,49 +61,51 @@ router.post('/register', (req, res) => {
         if (user) {
             return res.json({ success: false, msg: 'Username allready exist in our system' });
         } else{
-            jwt.sign({user: newUser}, config.secret, {  expiresIn: '10h' }, (err, token) => {
-                let resultToken = token;
-                User.addUser(newUser, (err, user) => {
-                    if (err) {
-                        res.json({ success: false, msg: 'Failed to register user' });
-                    } else {
+            User.addUser(newUser, (err, user) => {
+                if (err) {
+                    res.json({ success: false, msg: 'Failed to register user' });
+                } else {
+                    jwt.sign({user}, config.secret, {  expiresIn: '10h' }, (err, token) => {
+                        let resultToken = token;
+
                         const output = `
-                            <h1>Syneto CALCULATOR</h1>
-                            </br>
-                            <p>Please confirm your email by clicking the link bellow</p>
-                            </br>
-                            <p>http://localhost:5000/api/confirm/${resultToken}</p>
-                        `;
-        
-                        let transporter = nodemailer.createTransport({
-                            host: 'smtp.mail.yahoo.com',
-                            port: 465,
-                            secure: true, // use SSL
-                            auth: {
-                                user: 'synetocalculator@yahoo.com',
-                                pass: 'zxcasdqwe123!@#'
-                            }
-                        });
-        
-                        // setup email data with unicode symbols
-                        let mailOptions = {
-                            from: '"SYNETO Calculator" <synetocalculator@yahoo.com>', // sender address
-                            to: req.body.email, // list of receivers
-                            subject: 'Confirmation email', // Subject line
-                            text: 'Hello world?', // plain text body
-                            html: output // html body
-                        };
-        
-                        // send mail with defined transport object
-                        transporter.sendMail(mailOptions, (error, info) => {
-                            if (error) {
-                                return console.log(error);
-                            }
-                            res.json({ success: true, msg: 'E-mail sent'});
-                        });                
-                    }
-                });        
-            }) 
+                        <h1>Syneto CALCULATOR</h1>
+                        </br>
+                        <p>Please confirm your email by clicking the link bellow</p>
+                        </br>
+                        <p>http://localhost:5000/api/confirm/${resultToken}</p>
+                    `;
+    
+                    let transporter = nodemailer.createTransport({
+                        host: 'smtp.mail.yahoo.com',
+                        port: 465,
+                        secure: true, // use SSL
+                        auth: {
+                            user: 'synetocalculator@yahoo.com',
+                            pass: 'zxcasdqwe123!@#'
+                        }
+                    });
+    
+                    // setup email data with unicode symbols
+                    let mailOptions = {
+                        from: '"SYNETO Calculator" <synetocalculator@yahoo.com>', // sender address
+                        to: req.body.email, // list of receivers
+                        subject: 'Confirmation email', // Subject line
+                        text: 'Hello world?', // plain text body
+                        html: output // html body
+                    };
+    
+                    // send mail with defined transport object
+                    transporter.sendMail(mailOptions, (error, info) => {
+                        if (error) {
+                            return console.log(error);
+                        }
+                        res.json({ success: true, msg: 'E-mail sent'});
+                    }); 
+                               
+                    })                                    
+                }
+            });            
         }
     })      
 });
@@ -128,24 +130,64 @@ router.post('/login', (req, res) => {
             }
 
             if (isMatch) {
-                jwt.sign({user}, config.secret, {  expiresIn: '10h' }, (err, token) => {
-                    res.json({
-                        success: true,
-                        token: 'Bearer ' + token,
-                        user: {
-                            id: user._id,
-                            username: user.username,
-                            email: user.email,
-                            role: user.role,
-                            confirmed: user.confirmed
-                        }
-                    })
-                })                
+                if(user.confirmed == true){
+                    jwt.sign({user}, config.secret, {  expiresIn: '10h' }, (err, token) => {
+                        res.json({
+                            success: true,
+                            token: 'Bearer ' + token,
+                            user: {
+                                id: user._id,
+                                username: user.username,
+                                email: user.email,
+                                role: user.role,
+                                confirmed: user.confirmed
+                            }
+                        })
+                    })  
+                }else{
+                    return res.json({ success: false, msg: 'Please confirm your account' });
+                }
+                              
             } else {
                 return res.json({ success: false, msg: 'Wrong password' });
             }
         })
     })
 });
+
+router.get('/users', passport, (req, res) => {
+    jwt.verify(req.token, config.secret, (err, authData) => {
+        if(err) {
+            res.sendStatus(403);
+        } else {
+            User.getAllUsers(authData.user._id, (err, user) => {
+                if (err) {
+                    res.json({ success: false, msg: 'User not found' });
+                } else {
+                    res.json({ success: true, user });
+                }
+            }); 
+        }
+    })  
+})
+
+router.put('/ban', passport, (req, res) => {
+    jwt.verify(req.token, config.secret, (err, authData) => {
+        if(err) {
+            res.sendStatus(403);
+        } else {
+            if(authData.user.role == 0){
+                req.body.banned = true;
+                User.updateUser(req.body, (err, user) => {
+                    if (err) {
+                        res.json({ success: false, msg: 'User not found' });
+                    } else {
+                        res.json({ success: true,  msg: 'User was banned' });
+                    }
+                });
+            }             
+        }
+    }) 
+})
 
 module.exports = router;
