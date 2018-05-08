@@ -4,15 +4,16 @@
         <title>
             Calculator
         </title>
-        <link rel="stylesheet" href="../styles/app.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+        <link rel="stylesheet" href="../styles/app.css">        
     </head>
 
     <body>
         <header>
             <nav>
-                <a href="#login" onclick="goTo(this)">Login</a> |
-                <a href="#calculator" onclick="goTo(this)">Calculator</a> |
-                <a href="#users" onclick="goTo(this)">Users</a>
+                <a href="" onclick="logout(this)" id="logout" style="display: none;">Logout</a> 
+                <a href="#calculator" id="calculatorNav" onclick="goTo(this)" style="display: none;">Calculator</a> 
+                <a href="#users" id="usersNav" onclick="goTo(this)" style="display: none;">Users</a>
             </nav>
         </header>
 
@@ -53,33 +54,48 @@
             <div class="login-box">
                 <img src="../styles/images/avatar.jpg" class="avatar">
                 <h1>Login Here</h1>
-                <form>
+                <form id="formLogin" method="post" action="" onsubmit="return false;">
                     <p>Username</p>
-                    <input type="text" name="username" placeholder="Enter Username">
+                    <input type="text" name="usernameLogin" id="usernameLogin" placeholder="Enter Username" required>
                     <p>Password</p>
-                    <input type="password" name="password" placeholder="Enter Password">
-                    <input type="submit" name="submit" value="Login">
-                    <a href="#register" onclick="goTo(this)">Create an account</a>  
+                    <input type="password" name="passwordLogin" id="passwordLogin" placeholder="Enter Password" required>
+                    <input type="submit" name="loginSubmit" id="loginSubmit" value="Login">
+                    <a href="#register" onclick="goTo(this)">Create an account</a> 
+                    <p id="errMsg" style="color: red"></p> 
+                    <div class="loader" id="loader" style="display: none;"></div>
                 </form>                
             </div>        
         </div>
 
-        <div id="register" style="display: none;">
+        <div id="register" style="display: none;"method="post" action="" onsubmit="return false;">
             <div class="login-box">
                 <img src="../styles/images/avatar.jpg" class="avatar">
                 <h1>Register</h1>
                 <form>
                     <p>Username</p>
-                    <input type="text" name="username" placeholder="Enter Username">
+                    <input type="text" name="username" id="username" placeholder="Enter Username" required>
                     <p>Email</p>
-                    <input type="email" name="email" placeholder="Enter Email">
+                    <input type="email" name="email" id="email" placeholder="Enter Email" required>
                     <p>Password</p>
-                    <input type="password" name="password" placeholder="Enter Password">
+                    <input type="password" name="password" id="password" placeholder="Enter Password" required>
                     <p>Confirm password</p>
-                    <input type="password" name="confirmPassword" placeholder="Enter Password">
-                    <input type="submit" name="submit" value="Register">
+                    <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Enter Password" required>
+                    <input type="submit" name="submit" id="submit" value="Register">                    
+                    <a href="#login" onclick="goTo(null, 'login')">Login to your account</a>
+                    <p id="errMsg" style="color: red"></p> 
                 </form>                
             </div> 
+        </div> 
+        
+        <div id="users" style="display: none;">
+            <table id="usersTable">
+                <tr class="tableHeader">
+                    <td>Name</td>
+                    <td>Email</td>
+                    <td>Ban</td>
+                </tr>
+
+            </table>
         </div>
 
         <footer>

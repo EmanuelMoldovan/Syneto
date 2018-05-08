@@ -58,6 +58,7 @@ body {
   transform: translate(-50%, -50%);
   box-sizing: border-box;
   padding: 70px 30px;
+  padding-bottom: 20px;
   margin-top: 50px; }
 
 .avatar {
@@ -126,6 +127,50 @@ nav {
 
 a:link {
   text-decoration: none;
-  color: #fff; }
+  color: #005ce6; }
+
+.loader {
+  border: 6px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 6px solid #3498db;
+  width: 50px;
+  height: 50px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+  margin-top: 10px;
+  position: relative;
+  left: calc(50% - 25px); }
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg); }
+  100% {
+    -webkit-transform: rotate(360deg); } }
+@keyframes spin {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(360deg); } }
+#errMsg {
+  margin-top: 5px; }
+
+table {
+  background-color: black;
+  opacity: 0.6;
+  color: white; }
+
+tr {
+  transition: all 0.2s ease-out; }
+
+tr:hover {
+  font-size: 20px; }
+
+.tableHeader {
+  font-size: 40px; }
+
+.tableHeader:hover {
+  font-size: 40px;
+  color: white; }
 
 /*# sourceMappingURL=app.css.map */

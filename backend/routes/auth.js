@@ -21,6 +21,12 @@ router.get('/try', passport, (req, res) => {
     })  
 })
 
+router.get('/t', (req, res) => {
+    res.json({
+        message: 'Post created...'
+    })  
+})
+
 // Email confirmation API
 router.get('/confirm/:token', (req, res) => {
     jwt.verify(req.params.token, config.secret, (err, authData) => {
@@ -130,7 +136,7 @@ router.post('/login', (req, res) => {
             }
 
             if (isMatch) {
-                if(user.confirmed == true){
+                if(user.confirmed == true && !user.banned){
                     jwt.sign({user}, config.secret, {  expiresIn: '10h' }, (err, token) => {
                         res.json({
                             success: true,
@@ -145,6 +151,9 @@ router.post('/login', (req, res) => {
                         })
                     })  
                 }else{
+                    if(user.banned){
+                        return res.json({ success: false, msg: 'You are banned' });
+                    }
                     return res.json({ success: false, msg: 'Please confirm your account' });
                 }
                               
@@ -177,7 +186,12 @@ router.put('/ban', passport, (req, res) => {
             res.sendStatus(403);
         } else {
             if(authData.user.role == 0){
-                req.body.banned = true;
+                if(req.body.banned == 'true'){
+                    req.body.banned = false;
+                }else{
+                    req.body.banned = true;
+                }
+                
                 User.updateUser(req.body, (err, user) => {
                     if (err) {
                         res.json({ success: false, msg: 'User not found' });
