@@ -91,3 +91,11 @@ module.exports.getAllUsers = function(userId, callback) {
 module.exports.deleteUser = function(userId, callback) {
     User.remove({ _id: userId }, callback);
 }
+
+module.exports.match = (username) => {
+    if(typeof username === 'string')
+        return true;
+    else
+        return false;
+
+}

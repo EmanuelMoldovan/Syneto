@@ -21,12 +21,6 @@ router.get('/try', passport, (req, res) => {
     })  
 })
 
-router.get('/t', (req, res) => {
-    res.json({
-        message: 'Post created...'
-    })  
-})
-
 // Email confirmation API
 router.get('/confirm/:token', (req, res) => {
     jwt.verify(req.params.token, config.secret, (err, authData) => {
